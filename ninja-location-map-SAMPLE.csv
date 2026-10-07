@@ -1,0 +1,18 @@
+Subnet,OrgID,LocationID,Org,Location
+10.10.0.0/24,101,5001,Endpoint Environment,Bluffton
+10.10.1.0/24,101,5002,Endpoint Environment,Brewster
+10.10.2.0/24,101,5003,Endpoint Environment,Bristol
+10.10.3.0/24,101,5004,Endpoint Environment,Burlington
+10.10.4.0/24,101,5005,Endpoint Environment,Calgary
+10.10.5.0/24,101,5006,Endpoint Environment,Corp
+10.10.6.0/24,101,5007,Endpoint Environment,Dayton
+10.10.7.0/24,101,5008,Endpoint Environment,Fort Worth
+10.10.8.0/24,101,5009,Endpoint Environment,Guelph
+10.10.9.0/24,101,5010,Endpoint Environment,Main Office
+10.20.0.0/24,102,5011,Endpoint Environment East,Millennium
+10.20.1.0/24,102,5012,Endpoint Environment East,Newport
+10.20.2.0/24,102,5013,Endpoint Environment East,Perham
+10.20.3.0/24,102,5014,Endpoint Environment East,Site 14
+10.10.5.200-250,101,5015,Endpoint Environment,Corp - Server VLAN
+10.10.9.77,101,5016,Endpoint Environment,Main Office - Cache Host
+0.0.0.0/0,101,5099,Endpoint Environment,Unassigned Holding

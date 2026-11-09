@@ -78,11 +78,11 @@
       ----------------  ----------  ----------------------------------------------------------
       clientId          String      API client ID
       clientSecret      String      API client secret
-      ninjaUrl          Drop-Down   https://ca.ninjarmm.com etc. Default https://app.ninjarmm.com
-      matchOn           Drop-Down   LocalIP | Gateway | PublicIP | Auto
+      ninjaUrl          Dropdown    https://ca.ninjarmm.com etc. Default https://app.ninjarmm.com
+      matchOn           Dropdown    LocalIP | Gateway | PublicIP | Auto
       mapUrl            String      HTTPS URL to the site-map CSV (easiest for Ninja runs)
       mapPath           String      Local path to the site-map CSV
-      mapInline         Multi-line  Paste the CSV contents directly
+      mapInline         String      CSV on one line, rows separated by a literal \n (no multi-line type exists)
       orgId             Integer     Restrict to one source org
       excludeTags       String      Comma-separated tags to never move (e.g. Pinned,Roaming)
       excludeNames      String      Comma-separated device-name wildcards to never move

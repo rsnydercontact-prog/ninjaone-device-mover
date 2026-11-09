@@ -178,24 +178,24 @@ The agent has no copy of your CSV, so you have to tell the automation where to f
 
 | Variable | Type | Use it when |
 |---|---|---|
-| `mapUrl` | String | **Recommended.** An HTTPS URL to the CSV. Keep the file in source control or on an internal web server and every run picks up the current version — no script edit, no file to copy onto the agent. |
-| `mapInline` | Multi-line | You would rather paste the CSV contents straight into the variable. Fine for a small, stable map; you edit the automation to change a site. |
-| `mapPath` | String | The CSV already sits on that specific agent's disk. |
+| `mapPath` | String/Text | **Simplest.** Save the CSV on the device that runs the automation and enter its full path, e.g. `C:\NinjaMover\ninja-location-map.csv`. To change a site, edit that file. |
+| `mapUrl` | String/Text | An HTTPS URL to the CSV, e.g. on an internal web server. Every run picks up the current file, so nothing has to be copied onto the agent. The URL must download the raw CSV without a sign-in. |
+| `mapInline` | String/Text | Small maps only. NinjaOne has no multi-line variable type, so put the whole CSV on one line with a literal `\n` between rows, e.g. `Subnet,OrgID,LocationID,Org,Location\n10.10.0.0/24,101,5001,Endpoint Environment,Bluffton` |
 
 While you are on that tab, add the rest of the settings you want. All Script Variables are optional and matched case-insensitively.
 
 | Variable | Type | What it does |
 |---|---|---|
 | `execute` | Checkbox | **Unticked = dry run.** Tick it to actually move devices. Add this one now and leave it unticked. |
-| `matchOn` | Drop-Down | `LocalIP` (default) / `Gateway` / `PublicIP` / `Auto`. See [Matching modes](#matching-modes). |
+| `matchOn` | Dropdown | `LocalIP` (default) / `Gateway` / `PublicIP` / `Auto`. See [Matching modes](#matching-modes). |
 | `orgId` | Integer | Restrict the run to one source organization. Useful for a staged rollout. |
-| `excludeTags` | String | Comma-separated tags to never move, e.g. `Pinned,Roaming`. |
-| `excludeNames` | String | Comma-separated name wildcards, e.g. `EPSON*,*-KIOSK`. |
+| `excludeTags` | String/Text | Comma-separated tags to never move, e.g. `Pinned,Roaming`. |
+| `excludeNames` | String/Text | Comma-separated name wildcards, e.g. `EPSON*,*-KIOSK`. |
 | `skipOffline` | Checkbox | Ignore offline devices — their last known IP may be stale. |
 | `staleDays` | Integer | Ignore devices not seen in N days. `0` = off. |
 | `maxMoves` | Integer | Safety cap per run. Default `250`. `0` = unlimited. |
-| `ninjaUrl` | Drop-Down | Only if you are not using the `ninjaoneInstance` custom field. |
-| `clientId` / `clientSecret` | String | Only if you are not using the custom fields from step 2. |
+| `ninjaUrl` | Dropdown | Only if you are not using the `ninjaoneInstance` custom field. |
+| `clientId` / `clientSecret` | String/Text | Only if you are not using the custom fields from step 2. |
 
 ---
 
@@ -258,6 +258,26 @@ CSV with columns `Subnet,OrgID,LocationID,Org,Location`. The `Subnet` cell accep
 **The most specific rule wins, whatever order the rows are in.** A single IP beats a /24, which beats a /16, which beats the catch-all.
 
 So you can carve a handful of servers out of a site range without reordering the file, and a catch-all row safely acts as an "unassigned holding" bucket.
+
+### Catch-all for remote users
+
+To send every device that is not on a known office subnet to one location (for example a **Remote** location with no cache server), add one row:
+
+```
+0.0.0.0/0,101,5099,Endpoint Environment,Remote
+```
+
+- Put **Remote** in the same organization as your office locations. Moving between locations in one org keeps the device's policy; moving between orgs changes it.
+- When the device is back on an office subnet, the next run moves it to that office.
+- A device with no usable IPv4 is never moved, catch-all or not. It is listed in `mover-unmatched.csv`.
+
+Check the map before relying on the catch-all:
+
+- **Remove supernets copied from AD Sites and Services.** Rows like `128.0.0.0/2` or `192.0.0.0/3` cover huge parts of the address space, including every `192.168.x.x` home network, so home users match that site instead of the catch-all.
+- **Watch for common home ranges.** `192.168.0.0/24`, `192.168.1.0/24`, `10.0.0.0/24` (Xfinity) and `10.0.1.0/24` are used by home routers. If one of these is also a real office subnet, devices on a home network with the same range are treated as being in that office.
+- **Phone hotspots:** iPhone hotspots use `172.20.10.0/28`. A `172.20.0.0/16` office row catches them.
+
+The dry run shows where every device would go, so check it for remote laptops landing in an office.
 
 Loopback, `169.254.x` APIPA and IPv6 addresses are ignored, so a dual-stack device still matches on its real IPv4.
 

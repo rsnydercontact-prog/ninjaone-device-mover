@@ -268,6 +268,7 @@ To send every device that is not on a known office subnet to one location (for e
 ```
 
 - Put **Remote** in the same organization as your office locations. Moving between locations in one org keeps the device's policy; moving between orgs changes it.
+- **Set the `orgId` variable to that organization.** Without it the script considers every device in the tenant, so servers and anything else not in the map match the catch-all and are moved to Remote. With `orgId` set, devices in other organizations are never touched. This is also why Remote belongs in the same org: a device moved to a Remote location in another org would fall outside `orgId` and never be moved back.
 - When the device is back on an office subnet, the next run moves it to that office.
 - A device with no usable IPv4 is never moved, catch-all or not. It is listed in `mover-unmatched.csv`.
 
